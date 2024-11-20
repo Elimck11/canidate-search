@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { searchGithub, searchGithubUser } from '../api/API';
+import SavedCandidates from './SavedCandidates';
 
 const CandidateSearch = () => {
 
@@ -27,6 +28,11 @@ const CandidateSearch = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  function saveCandidate(candidate: Candidate) {
+    const savedCandidates = JSON.parse(localStorage.getItem('savedCandidates') || '[]');
+    savedCandidates.push(candidate);
+    localStorage.setItem('savedCandidates', JSON.stringify(savedCandidates));
+  }
 
   useEffect(function() {
 
@@ -36,7 +42,7 @@ const CandidateSearch = () => {
 
       const firstCandidate = myArray[0];
 
-      // console.log(firstCandidate)
+      console.log(firstCandidate)
 
       const userData = await searchGithubUser(firstCandidate.login)
 
@@ -63,6 +69,7 @@ const CandidateSearch = () => {
   useEffect(function() {
     
     async function getData() {
+      
       const nextOne: any = candidates[currentIndex];
 
       const userData = await searchGithubUser(nextOne.login);
@@ -87,6 +94,9 @@ const CandidateSearch = () => {
     setCurrentIndex(currentIndex + 1);
   }
 
+  function HandleSaveCandidates() {
+    saveCandidate(currentCandidate);
+  }
 
   return (
     <>
@@ -107,8 +117,8 @@ const CandidateSearch = () => {
       
       
       <div className="button-container">
-        <button onClick={nextCandidate}>Minus</button>
-        <button>Plus</button>
+        <button onClick={nextCandidate}>-</button>
+        <button onClick={SavedCandidates}>+</button>
       </div>
     
     </>

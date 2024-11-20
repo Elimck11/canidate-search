@@ -53,6 +53,9 @@ button {
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
+  height: 70px;
+  width: 80px;
+  border-radius: 50%;
 }
 button:hover {
   border-color: #646cff;
@@ -139,4 +142,5 @@ tbody tr:nth-child(odd) {
   flex-direction: row;
   justify-content: space-between;
   margin: 20px;
+  font-size: 27px;
 }
