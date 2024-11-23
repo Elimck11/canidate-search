@@ -1,34 +1,72 @@
 import { useState, useEffect } from 'react';
 
-const SavedCandidates = () => {
+import type Candidate from '../interfaces/Candidate.interface';
+import SavedCandidateTables from '../components/SavedCandidateTable';
 
-  const [savedCandidates, setSavedCandidates] = useState<any[]>([]);
+
+const SavedCandidates = () => {
+  //! Candidate interface to state variable
+  const [potentialCandidates, setPotentialCandidates] = useState<Candidate[]>([]);
+
+  //! function part of the page
+  //! ================================================
+
+  // const removeFromStorage = (
+  //   e: React.MouseEvent<SVGAElement, MouseEvent>,
+  //   login: string
+  // ) => {
+  //   e.preventDefault();
+
+  //   //! remove from storage part
+  //   let parsedCandidates: Candidate[] = [];
+
+  //   const storedCandiates = localStorage.getItem('potentialCandidates');
+  //   if (typeof storedCandiates === 'string') {
+  //     parsedCandidates = JSON.parse(storedCandiates);
+  //   }
+  //   parsedCandidates = parsedCandidates.filter(
+  //     (film) => film.login !== login
+  //   );
+  //   setPotentialCandidates(parsedCandidates);
+  //   localStorage.setItem('potentialCandidates', JSON.stringify(parsedCandidates));
+  // }
+
 
   useEffect(() => {
-    // Load saved candidates from localStorage
-    const saved = JSON.parse(localStorage.getItem('savedCandidates') || '[]');
-    setSavedCandidates(saved);
+    const storedCandidates = localStorage.getItem('potentialCandidates');
+    console.log(storedCandidates);
+    if (storedCandidates) {
+      const parsedCandidates = JSON.parse(storedCandidates);
+      setPotentialCandidates(parsedCandidates);
+    } else {
+      setPotentialCandidates([]);
+    }
   }, []);
 
+  //! ================================================
+  //! Look of the page
   return (
     <>
-      <h1>Saved Candidates</h1>
-      {savedCandidates.length === 0 ? (
-        <p>No candidates saved yet.</p>
-      ) : (
-        <ul>
-          {savedCandidates.map((candidate: any, index: number) => (
-            <li key={index}>
-              <img src={candidate.avatar} alt={candidate.username} width={50} />
-              <h3>{candidate.username}</h3>
-              <p>{candidate.location || "No location provided"}</p>
-              <p>{candidate.email || "No email provided"}</p>
-              <p>{candidate.company || "No company provided"}</p>
-              <a href={candidate.html_url} target="_blank" rel="noopener noreferrer">View Profile</a>
-            </li>
-          ))}
-        </ul>
-      )}
+      <h1>Potential Candidates</h1>
+      <table className={"table"}>
+        <thead>
+          <tr>
+          <th>Image</th>
+          <th>Name</th>
+          <th>Location</th>
+          <th>Email</th>
+          <th>Company</th>
+          <th>Bio</th>
+          <th>Reject</th>
+          </tr>
+        </thead>
+        <tbody>
+          <SavedCandidateTables
+            potentialCandidates={potentialCandidates}
+            setPotentialCandidates={setPotentialCandidates}
+          />
+        </tbody>
+      </table>
     </>
   );
 };

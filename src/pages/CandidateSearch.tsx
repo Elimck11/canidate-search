@@ -1,126 +1,79 @@
 import { useState, useEffect } from 'react';
 import { searchGithub, searchGithubUser } from '../api/API';
-import SavedCandidates from './SavedCandidates';
+
+import type Candidate from '../interfaces/Candidate.interface';
+import CandidateCard from '../components/CandidateCard';
 
 const CandidateSearch = () => {
+  //! the function part of the page
+  //! ==========================================
 
-  interface Candidate {
-    username: string,
-    avatar: string,
-    location: string,
-    email: string,
-    company: string,
-    bio: string
-  }
-
-
+  // Add Candidate interface to interface to state variable and set intial state obj
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [currentCandidate, setCurrentCandidate] = useState<Candidate>({
-    username: "",
-    avatar:"",
-    location: "",
-    email: "",
-    company: "",
-    bio: ""
-  })
+    avatar_url: '',
+    login: '',
+    name:'',
+    location: '',
+    email: '',
+    company: '',
+    bio: '',
+  });
 
-  const [candidates, setCandidates] = useState([]);
-
-
-  const [currentIndex, setCurrentIndex] = useState(0);
-
-  function saveCandidate(candidate: Candidate) {
-    const savedCandidates = JSON.parse(localStorage.getItem('savedCandidates') || '[]');
-    savedCandidates.push(candidate);
-    localStorage.setItem('savedCandidates', JSON.stringify(savedCandidates));
-  }
-
-  useEffect(function() {
-
-    async function getData() {
-      const myArray = await searchGithub();
-      setCandidates(myArray);
-
-      const firstCandidate = myArray[0];
-
-      console.log(firstCandidate)
-
-      const userData = await searchGithubUser(firstCandidate.login)
-
-      console.log(userData)
-
-      setCurrentCandidate({
-        username: userData.login,
-        avatar: userData.avatar_url,
-        location: userData.location,
-        email: userData.email,
-        company: userData.company,
-        bio: userData.bio
-      })
-
+  //* Function for adding Candidate to potential candidate list
+  const addToPotential = () => {
+    let parsedCandidates:Candidate[] = [];
+    const storedCandiates = localStorage.getItem('potentialCandidates');
+    if (typeof storedCandiates === 'string') {
+      parsedCandidates = JSON.parse(storedCandiates);
     }
+    parsedCandidates.push(currentCandidate);
+    localStorage.setItem('potentialCandidates', JSON.stringify(parsedCandidates));
+    fetchCandidates();
+  }
 
+  const fetchCandidates = async () => {
+    try {
+        const data: Candidate[] = await searchGithub(); // Call the searchGithub function
+        
+        const userData: Candidate = await searchGithubUser(data[0].login);
 
-    getData();
-
-  }, [])
-
-
-
-  useEffect(function() {
-    
-    async function getData() {
-      
-      const nextOne: any = candidates[currentIndex];
-
-      const userData = await searchGithubUser(nextOne.login);
-
-      setCurrentCandidate({
-        username: userData.login,
-        avatar: userData.avatar_url,
-        location: userData.location,
-        email: userData.email,
-        company: userData.company,
-        bio: userData.bio
-      });
+        setCurrentCandidate(userData); // Update the state with the fetched candidates
+    } catch (err) {
+        setError('An error occurred while fetching candidates');
+    } finally {
+        setLoading(false); // Set loading to false after the fetch is complete
     }
+};
 
-    getData();
+  useEffect(() => {
+    console.log('fetch candidates')
+    fetchCandidates(); // Invoke the fetch function
+  }, []); // Empty dependency array means this effect runs once on mount
 
-  }, [currentIndex])
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
-
-
-  function nextCandidate() {
-    setCurrentIndex(currentIndex + 1);
-  }
-
-  function HandleSaveCandidates() {
-    saveCandidate(currentCandidate);
-  }
-
+  //! ==========================================
+  //! the html part of the page
   return (
     <>
-      <h1>Candidate Search</h1>
- 
-
-      <div className="card">
-          <img className="card-image" src={currentCandidate.avatar}/>
-
-          <h3>{currentCandidate.username}</h3>
-
-          <p>Location: {currentCandidate.location || "No location provided"}</p>
-          <p>Email: {currentCandidate.email || "No email provided"}</p>
-          <p>Company: {currentCandidate.company || "No company provided"}</p>
-          <p>Bio: {currentCandidate.bio || "No bio provided"}</p>
-
+      <h1>CandidateSearch</h1>
+      <CandidateCard
+        currentCandidate={currentCandidate}
+      />
+      <div className="profile-card__actions">
+        <button className="btn btn--red" onClick={() => fetchCandidates()}>
+            <span className="btn__icon">-</span>
+        </button>
+        <button className="btn btn--green" onClick={() => addToPotential()}>
+            <span className="btn__icon">+</span>
+        </button>
       </div>
       
-      
-      <div className="button-container">
-        <button onClick={nextCandidate}>-</button>
-        <button onClick={SavedCandidates}>+</button>
-      </div>
-    
+      {console.log(`Current Candidate: ${currentCandidate}`)}
+      {console.log(currentCandidate)}
     </>
   )
 };

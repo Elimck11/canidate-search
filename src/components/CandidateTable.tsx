@@ -1,5 +1,5 @@
 import type Candidate from '../interfaces/Candidate.interface';
-import { removeFromStorage } from '../util/removeFromStorage';
+import { removeFromStorage } from '../util/RemoveFromStorage';
 // import { IoEyeOutline } from 'react-icons/io5';
 // import { ImCross } from 'react-icons/im';
 // import { CgPlayListAdd } from 'react-icons/cg';

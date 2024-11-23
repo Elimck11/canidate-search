@@ -123,24 +123,83 @@ tbody tr:nth-child(odd) {
 }
 
 
-.card {
+/* profile card css */
+.profile-card {
   width: 250px;
-  /* height: 400px; */
-  background-color: #000;
   border-radius: 10px;
-  padding: 25px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  background-color: #000;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 20px;
+  margin: 0 auto;
 }
 
-.card-image {
-  height: 240px;
-  width: 240px;
+.profile-card__image img {
+  width: 100%;
 }
 
-.button-container {
-  width: 250px;
+.profile-card__details {
+  text-align: left;
+}
+
+.profile-card__details h2 {
+  margin: 10px 0;
+  font-size: 1.5em;
+}
+
+.profile-card__details h2 span {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.profile-card__details p {
+  margin: 5px 0;
+  font-size: 0.9em;
+  justify-content: left;
+}
+
+.profile-card__details a {
+  color: #00f;
+  text-decoration: none;
+}
+
+.profile-card__details a:hover {
+  text-decoration: underline;
+}
+
+/* profile card buttons */
+.profile-card__actions {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin: 20px;
-  font-size: 27px;
+  justify-content: space-evenly;
+  margin-top: 20px;
+}
+
+.btn {
+  border: none;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 2rem;
+  color: #fff;
+}
+
+.btn--red {
+  background-color: rgb(212, 0, 0);
+  margin-right: 60px;
+}
+
+.btn--green {
+  background-color: rgb(8, 161, 8);
+}
+
+.btn__icon {
+  font-size: 2rem;
+  font-weight: bold;
 }
